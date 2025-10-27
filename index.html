@@ -5,6 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Семестровая работа</title>
     <link rel="stylesheet" href="style/styles.css">
+    <style>
+        .view-resume {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .view-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);
+            cursor: pointer;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .view-btn:active {
+            transform: translateY(0);
+        }
+
+        .view-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .view-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="page-container">
@@ -28,6 +74,16 @@
                 <img class="profile-photo" src="images/photo.png" alt="Фото автора">
                 <h2 class="profile-name">Иванов Артем ???вович</h2>
                 <p class="profile-group">ЭФБО-18-24</p>
+                
+                <!-- Кнопка просмотра резюме -->
+                <div class="view-resume">
+                    <a href="documents/resume.pdf" class="view-btn" target="_blank">
+                        <svg class="view-icon" viewBox="0 0 24 24">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                        Посмотреть резюме (PDF)
+                    </a>
+                </div>
             </article>
 
             <section class="about-me">
@@ -69,5 +125,18 @@
             <p>Иванов Артем ???вович, ЭФБО-18-24</p>
         </footer>
     </div>
+
+    <script>
+        // Обработка открытия резюме
+        document.querySelector('.view-btn').addEventListener('click', function(e) {
+            console.log('Пользователь открыл резюме в браузере');
+            
+            // Можно добавить проверку существования файла
+            // if (!fileExists) {
+            //     e.preventDefault();
+            //     alert('Файл резюме временно недоступен. Свяжитесь со мной для получения резюме.');
+            // }
+        });
+    </script>
 </body>
 </html>
