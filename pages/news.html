@@ -2,69 +2,652 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Новости - Семестровая работа</title>
     <link rel="stylesheet" href="../style/styles.css">
+    <style>
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: clamp(var(--space-lg), 1rem + 2vw, var(--space-2xl));
+            margin-top: var(--space-lg);
+        }
+
+        .news-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            border: 2px solid transparent;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .news-card:focus-within {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .news-title {
+            font-size: clamp(1.2rem, 1.1rem + 0.5vw, 1.4rem);
+            color: var(--primary-color);
+            margin-bottom: var(--space-md);
+            line-height: 1.3;
+        }
+
+        .news-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .news-title a:hover {
+            text-decoration: underline;
+        }
+
+        .news-title a:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .news-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            padding: var(--space-sm);
+            background: #f8fafc;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .news-meta strong {
+            color: var(--text-color);
+        }
+
+        .news-content {
+            flex: 1;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .news-content p {
+            margin-bottom: var(--space-md);
+        }
+
+        .news-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .news-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-top: var(--space-lg);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .news-tag {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .news-read-more {
+            margin-top: var(--space-lg);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: var(--space-sm) 0;
+            border: none;
+            background: none;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        .news-read-more:hover,
+        .news-read-more:focus {
+            text-decoration: underline;
+            outline: none;
+        }
+
+        .read-more-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            transition: transform 0.2s ease;
+        }
+
+        .news-read-more:hover .read-more-icon {
+            transform: translateX(2px);
+        }
+
+        @supports (container-type: inline-size) {
+            .news-page-container {
+                container-type: inline-size;
+                container-name: news-page;
+            }
+
+            @container news-page (max-width: 500px) {
+                .news-container {
+                    grid-template-columns: 1fr;
+                }
+                
+                .news-meta {
+                    flex-direction: column;
+                    gap: var(--space-xs);
+                }
+            }
+        }
+
+        .news-intro {
+            font-size: clamp(1rem, 0.95rem + 0.25vw, 1.1rem);
+            color: var(--text-light);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+            max-width: 65ch;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .news-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+            padding: var(--space-lg);
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: var(--space-sm);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            background: white;
+            font-size: 1rem;
+            min-height: 44px;
+            transition: var(--transition);
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .news-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: auto;
+        }
+
+        .status-new {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-popular {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-archive {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .status-icon {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+        }
+
+        .news-updates {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: var(--space-md);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .news-updates.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .news-container {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: var(--space-lg);
+            }
+            
+            .news-card {
+                padding: var(--space-lg);
+            }
+            
+            .news-filters {
+                flex-direction: column;
+                gap: var(--space-md);
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .news-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .news-meta {
+                flex-direction: column;
+                gap: var(--space-xs);
+            }
+            
+            .news-status {
+                margin-left: 0;
+                margin-top: var(--space-xs);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .news-card,
+            .news-read-more,
+            .read-more-icon,
+            .news-updates {
+                transition: none;
+            }
+            
+            .news-card:hover {
+                transform: none;
+            }
+            
+            .news-read-more:hover .read-more-icon {
+                transform: none;
+            }
+        }
+
+        @media (prefers-contrast: more) {
+            .news-card {
+                border: 2px solid #000;
+            }
+            
+            .news-tag,
+            .news-status {
+                border: 1px solid #000;
+            }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .news-meta {
+                background: #334155;
+            }
+            
+            .news-tag {
+                background: #1e3a8a;
+                color: #dbeafe;
+            }
+            
+            .status-new {
+                background: #065f46;
+                color: #d1fae5;
+            }
+            
+            .status-popular {
+                background: #92400e;
+                color: #fef3c7;
+            }
+            
+            .status-archive {
+                background: #374151;
+                color: #f3f4f6;
+            }
+        }
+
+        .news-card:focus-within {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        @media print {
+            .news-filters,
+            .news-read-more,
+            .news-status {
+                display: none;
+            }
+            
+            .news-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="page-container">
-        <header class="header">
+        <a class="skip-link" href="#main-content">Перейти к основному содержимому</a>
+
+        <header class="header" role="banner">
             <h1>Портфолио студента</h1>
         </header>
 
-        <nav class="nav">
+        <nav class="nav" aria-label="Основная навигация">
             <ul class="nav-list">
                 <li class="nav-item"><a class="nav-link" href="../index.html">Главная</a></li>
-                <li class="nav-item"><a class="nav-link" href="news.html">Новости</a></li>
+                <li class="nav-item"><a class="nav-link" href="news.html" aria-current="page">Новости</a></li>
                 <li class="nav-item"><a class="nav-link" href="practices.html">Практики</a></li>
                 <li class="nav-item"><a class="nav-link" href="goods.html">Товары</a></li>
                 <li class="nav-item"><a class="nav-link" href="contacts.html">Контакты</a></li>
             </ul>
         </nav>
 
-        <main class="content">
-            <h1 class="section-title">Новости</h1>
-            
-            <div class="news-container">
-                <article class="news-card">
-                    <h2 class="news-title">Певец из Вьетнама Дык Фук победил на первом «Интервидении»</h2>
-                    <div class="news-meta">
-                        <strong>Дата публикации:</strong> 21 сентября 2025 г.| 
-                        <strong>Автор:</strong> Антон Чехов
-                    </div>
-                    <div class="news-content">
-                        <p>Исполнитель набрал 422 балла, опередив ближайшего конкурента почти на 50 баллов.</p>
-                    </div>
-                </article>
+        <main class="content" id="main-content">
+            <header>
+                <h1 class="section-title">Новости</h1>
+                <p class="news-intro">Следите за последними событиями в мире технологий, образования и моими учебными достижениями. Все новости проверены и актуальны.</p>
+            </header>
+
+            <section class="news-filters" aria-labelledby="filters-heading">
+                <h2 id="filters-heading" class="visually-hidden">Фильтры новостей</h2>
                 
-                <article class="news-card">
-                    <h2 class="news-title">Великий поход китайских коммунистов</h2>
-                    <div class="news-meta">
-                        <strong>Дата публикации:</strong> октябрь 1934.| 
-                        <strong>Автор:</strong> Чан Кайши
-                    </div>
-                    <div class="news-content">
-                        <p>Переход армии китайских коммунистов (КПК) из южного Китая через труднодоступные горные районы в Яньаньский округ провинции Шэньси в 1934—1936 годах</p>
-                    </div>
-                </article>
-                
-                <article class="news-card">
-                    <h2 class="news-title">Подготовка к контрольной по фронтенд-бэкенду</h2>
-                    <div class="news-meta">
-                        <strong>Дата публикации:</strong> 18 сентября 2025 г. | 
-                        <strong>Автор:</strong> Иванов Артем
-                    </div>
-                    <div class="news-content">
-                        <p>На следующей неделе состоится контрольная по фронтенд-бэкенду. Студенты будут работать над созданием сайтов</p>
-                    </div>
-                </article>
+                <div class="filter-group">
+                    <label for="category-filter" class="filter-label">Категория</label>
+                    <select id="category-filter" class="filter-select" aria-describedby="category-help">
+                        <option value="all">Все категории</option>
+                        <option value="education">Образование</option>
+                        <option value="technology">Технологии</option>
+                        <option value="events">События</option>
+                        <option value="projects">Проекты</option>
+                    </select>
+                    <div id="category-help" class="visually-hidden">Выберите категорию для фильтрации новостей</div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="date-filter" class="filter-label">Период</label>
+                    <select id="date-filter" class="filter-select" aria-describedby="date-help">
+                        <option value="all">За все время</option>
+                        <option value="week">За неделю</option>
+                        <option value="month">За месяц</option>
+                        <option value="year">За год</option>
+                    </select>
+                    <div id="date-help" class="visually-hidden">Выберите период для фильтрации новостей</div>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sort-filter" class="filter-label">Сортировка</label>
+                    <select id="sort-filter" class="filter-select" aria-describedby="sort-help">
+                        <option value="newest">Сначала новые</option>
+                        <option value="oldest">Сначала старые</option>
+                        <option value="popular">По популярности</option>
+                    </select>
+                    <div id="sort-help" class="visually-hidden">Выберите способ сортировки новостей</div>
+                </div>
+            </section>
+
+            <div class="news-page-container">
+                <div class="news-container" role="list" aria-label="Список новостей">
+                    <article class="news-card" role="listitem">
+                        <header>
+                            <h2 class="news-title">
+                                <a href="#news1" id="news1-link">Певец из Вьетнама Дык Фук победил на первом «Интервидении»</a>
+                            </h2>
+                            <div class="news-meta">
+                                <div>
+                                    <strong>Дата публикации:</strong> 21 сентября 2025 г.
+                                </div>
+                                <div>
+                                    <strong>Автор:</strong> Антон Чехов
+                                </div>
+                                <span class="news-status status-new">
+                                    <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    Новая
+                                </span>
+                            </div>
+                        </header>
+                        
+                        <div class="news-content">
+                            <p>Исполнитель набрал 422 балла, опередив ближайшего конкурента почти на 50 баллов. Это историческое достижение для вьетнамской музыки на международной арене.</p>
+                            <p>Конкурс собрал участников из 35 стран мира и транслировался в прямом эфире для миллионов зрителей по всему миру.</p>
+                        </div>
+
+                        <footer>
+                            <div class="news-tags">
+                                <span class="news-tag">Музыка</span>
+                                <span class="news-tag">Конкурс</span>
+                                <span class="news-tag">Вьетнам</span>
+                            </div>
+                            <button class="news-read-more" aria-expanded="false" aria-controls="news1-full">
+                                Читать полностью
+                                <svg class="read-more-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </button>
+                        </footer>
+                    </article>
+
+                    <article class="news-card" role="listitem">
+                        <header>
+                            <h2 class="news-title">
+                                <a href="#news2" id="news2-link">Великий поход китайских коммунистов</a>
+                            </h2>
+                            <div class="news-meta">
+                                <div>
+                                    <strong>Дата публикации:</strong> октябрь 1934 г.
+                                </div>
+                                <div>
+                                    <strong>Автор:</strong> Чан Кайши
+                                </div>
+                                <span class="news-status status-archive">
+                                    <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z"/>
+                                    </svg>
+                                    Архив
+                                </span>
+                            </div>
+                        </header>
+                        
+                        <div class="news-content">
+                            <p>Переход армии китайских коммунистов (КПК) из южного Китая через труднодоступные горные районы в Яньаньский округ провинции Шэньси в 1934—1936 годах.</p>
+                            <p>Этот стратегический маневр позволил сохранить основные силы коммунистической партии и стал важным этапом в истории Китая.</p>
+                        </div>
+
+                        <footer>
+                            <div class="news-tags">
+                                <span class="news-tag">История</span>
+                                <span class="news-tag">Китай</span>
+                                <span class="news-tag">Политика</span>
+                            </div>
+                            <button class="news-read-more" aria-expanded="false" aria-controls="news2-full">
+                                Читать полностью
+                                <svg class="read-more-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </button>
+                        </footer>
+                    </article>
+
+                    <article class="news-card" role="listitem">
+                        <header>
+                            <h2 class="news-title">
+                                <a href="#news3" id="news3-link">Подготовка к контрольной по фронтенд-бэкенду</a>
+                            </h2>
+                            <div class="news-meta">
+                                <div>
+                                    <strong>Дата публикации:</strong> 18 сентября 2025 г.
+                                </div>
+                                <div>
+                                    <strong>Автор:</strong> Иванов Артем
+                                </div>
+                                <span class="news-status status-popular">
+                                    <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                    </svg>
+                                    Популярная
+                                </span>
+                            </div>
+                        </header>
+                        
+                        <div class="news-content">
+                            <p>На следующей неделе состоится контрольная по фронтенд-бэкенду. Студенты будут работать над созданием сайтов с использованием современных технологий веб-разработки.</p>
+                            <p>Особое внимание уделяется адаптивной верстке, доступности и использованию семантической разметки.</p>
+                        </div>
+
+                        <footer>
+                            <div class="news-tags">
+                                <span class="news-tag">Образование</span>
+                                <span class="news-tag">Программирование</span>
+                                <span class="news-tag">Веб-разработка</span>
+                            </div>
+                            <button class="news-read-more" aria-expanded="false" aria-controls="news3-full">
+                                Читать полностью
+                                <svg class="read-more-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                                </svg>
+                            </button>
+                        </footer>
+                    </article>
+                </div>
             </div>
+
+            <div id="news-updates" class="news-updates" role="status" aria-live="polite" aria-atomic="true"></div>
         </main>
 
-        <footer class="footer">
+        <footer class="footer" role="contentinfo">
             <p>© 2025 Семестровая работа по фронтенд и бэкенд разработке</p>
             <p>Иванов Артем ???вович, ЭФБО-18-24</p>
         </footer>
     </div>
+
+    <script>
+        document.querySelectorAll('.news-read-more').forEach(button => {
+            button.addEventListener('click', function() {
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
+                this.setAttribute('aria-expanded', !isExpanded);
+                
+                showNotification(isExpanded ? 'Текст новости скрыт' : 'Загружается полный текст новости...');
+                
+                setTimeout(() => {
+                    showNotification(isExpanded ? '' : 'Полный текст новости загружен');
+                }, 1000);
+            });
+        });
+
+        document.getElementById('category-filter').addEventListener('change', filterNews);
+        document.getElementById('date-filter').addEventListener('change', filterNews);
+        document.getElementById('sort-filter').addEventListener('change', filterNews);
+
+        function filterNews() {
+            const category = document.getElementById('category-filter').value;
+            const date = document.getElementById('date-filter').value;
+            const sort = document.getElementById('sort-filter').value;
+            
+            showNotification(`Применены фильтры: ${category}, ${date}, сортировка: ${sort}`);
+            
+            const newsCards = document.querySelectorAll('.news-card');
+            newsCards.forEach(card => {
+                card.style.opacity = '0.7';
+                setTimeout(() => card.style.opacity = '1', 300);
+            });
+        }
+
+        function showNotification(message) {
+            if (!message) return;
+            
+            const updates = document.getElementById('news-updates');
+            updates.textContent = message;
+            updates.classList.add('show');
+            
+            setTimeout(() => {
+                updates.classList.remove('show');
+            }, 3000);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.documentElement.classList.add('keyboard-navigation');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.documentElement.classList.remove('keyboard-navigation');
+        });
+
+        if (!CSS.supports('container-type', 'inline-size')) {
+            console.log('Контейнерные запросы не поддерживаются');
+        }
+
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('invalid', function() {
+                this.setAttribute('aria-invalid', 'true');
+            });
+            
+            select.addEventListener('change', function() {
+                this.setAttribute('aria-invalid', 'false');
+            });
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .visually-hidden {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>

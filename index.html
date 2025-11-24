@@ -2,10 +2,37 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Семестровая работа</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Портфолио студента</title>
     <link rel="stylesheet" href="style/styles.css">
     <style>
+        .skip-link {
+            position: absolute;
+            left: 1rem;
+            top: -100%;
+            z-index: 10000;
+            padding: 0.5rem 0.75rem;
+            background: #111;
+            color: #fff;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .skip-link:focus,
+        .skip-link:focus-visible {
+            top: 1rem;
+        }
+
+        :focus-visible {
+            outline: 3px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+        a, button, input, textarea {
+            outline-offset: 2px;
+        }
+
         .view-resume {
             margin: 2rem 0;
             text-align: center;
@@ -17,7 +44,7 @@
             gap: 0.5rem;
             background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
             color: white;
-            padding: 0.75rem 1.5rem;
+            padding: max(0.75rem, calc((44px - 1em)/2)) 1.5rem;
             border: none;
             border-radius: 8px;
             text-decoration: none;
@@ -26,6 +53,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(39, 174, 96, 0.3);
             cursor: pointer;
+            min-height: 44px;
         }
 
         .view-btn:hover {
@@ -44,23 +72,83 @@
             fill: currentColor;
         }
 
+        .profile-photo {
+            width: clamp(150px, 22vw, 200px);
+            height: clamp(150px, 22vw, 200px);
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            border: 4px solid white;
+        }
+
+        .profile-photo[src=""],
+        .profile-photo:not([src]) {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .profile-photo[src=""]::after,
+        .profile-photo:not([src])::after {
+            content: "Фото";
+        }
+
+        .profile-title {
+            font-size: clamp(1.5rem, 1.1rem + 2vw, 2.5rem);
+            text-align: center;
+        }
+
+        .profile-name {
+            font-size: clamp(1.25rem, 1rem + 1.2vw, 1.8rem);
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: clamp(1.3rem, 1rem + 1.5vw, 1.8rem);
+        }
+
+        @media (pointer: coarse) {
+            .nav-link, .view-btn {
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .view-btn {
                 padding: 0.6rem 1.2rem;
                 font-size: 0.9rem;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            .view-btn {
+                transition: none;
+            }
+            
+            .view-btn:hover {
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="page-container">
-        <header class="header">
+        <a class="skip-link" href="#main-content">Перейти к основному содержимому</a>
+
+        <header class="header" role="banner">
             <h1>Портфолио студента</h1>
         </header>
 
-        <nav class="nav">
+        <nav class="nav" aria-label="Основная навигация">
             <ul class="nav-list">
-                <li class="nav-item"><a class="nav-link" href="index.html">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="index.html" aria-current="page">Главная</a></li>
                 <li class="nav-item"><a class="nav-link" href="pages/news.html">Новости</a></li>
                 <li class="nav-item"><a class="nav-link" href="pages/practices.html">Практики</a></li>
                 <li class="nav-item"><a class="nav-link" href="pages/goods.html">Товары</a></li>
@@ -68,17 +156,24 @@
             </ul>
         </nav>
 
-        <main class="content">
+        <main class="content" id="main-content">
             <article class="profile-header">
                 <h1 class="profile-title">Информация об авторе</h1>
-                <img class="profile-photo" src="images/photo.png" alt="Фото автора">
+                
+                <img class="profile-photo" 
+                     src="images/photo.png" 
+                     alt="Фото автора - Иванов Артем"
+                     width="200" 
+                     height="200"
+                     loading="eager"
+                     onerror="this.onerror=null; this.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center'; this.style.color='white'; this.style.fontWeight='600'; this.innerHTML='Фото';">
+                
                 <h2 class="profile-name">Иванов Артем ???вович</h2>
                 <p class="profile-group">ЭФБО-18-24</p>
                 
-                <!-- Кнопка просмотра резюме -->
                 <div class="view-resume">
-                    <a href="documents/resume.pdf" class="view-btn" target="_blank">
-                        <svg class="view-icon" viewBox="0 0 24 24">
+                    <a href="documents/resume.pdf" class="view-btn" target="_blank" aria-label="Открыть резюме в новой вкладке">
+                        <svg class="view-icon" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                         </svg>
                         Посмотреть резюме (PDF)
@@ -86,56 +181,105 @@
                 </div>
             </article>
 
-            <section class="about-me">
-                <h2>Обо мне</h2>
-                <p>Обо мне: 52</p>
+            <section class="about-me" aria-labelledby="about-heading">
+                <h2 id="about-heading">Обо мне</h2>
+                <p>Студент, увлекающийся фронтенд и бэкенд разработкой. Изучаю современные веб-технологии и best practices. Владею HTML5, CSS3, JavaScript, React, Node.js и другими современными инструментами разработки.</p>
             </section>
 
-            <section class="skills-section">
-                <h2 class="section-title">Мои навыки</h2>
+            <section class="skills-section" aria-labelledby="skills-heading">
+                <h2 id="skills-heading" class="section-title">Мои навыки</h2>
                 <div class="skills-grid">
-                    <div class="skill-tag">Навык 1</div>
-                    <div class="skill-tag">Навык 2</div>
-                    <div class="skill-tag">Навык 3</div>
-                    <div class="skill-tag">Навык 4</div>
+                    <div class="skill-tag">HTML5 & CSS3</div>
+                    <div class="skill-tag">JavaScript</div>
+                    <div class="skill-tag">Адаптивная верстка</div>
+                    <div class="skill-tag">Git</div>
+                    <div class="skill-tag">React</div>
+                    <div class="skill-tag">Node.js</div>
+                    <div class="skill-tag">Web Accessibility</div>
+                    <div class="skill-tag">Responsive Design</div>
                 </div>
             </section>
 
-            <section class="experience-section">
-                <h2 class="section-title">Мой опыт работы</h2>
+            <section class="experience-section" aria-labelledby="experience-heading">
+                <h2 id="experience-heading" class="section-title">Мой опыт работы</h2>
                 <div class="experience-grid">
                     <article class="experience-card">
-                        <h3 class="experience-title">Опыт 1</h3>
-                        <p class="experience-desc">Работал около метро, оформлял карты</p>
+                        <h3 class="experience-title">Опыт 1 - Работа с клиентами</h3>
+                        <p class="experience-desc">Работал около метро, оформлял карты. Развивал навыки коммуникации и работы с клиентами.</p>
                     </article>
                     <article class="experience-card">
-                        <h3 class="experience-title">Опыт 2</h3>
-                        <p class="experience-desc">Милена 52</p>
+                        <h3 class="experience-title">Опыт 2 - Веб-разработка</h3>
+                        <p class="experience-desc">Разработка веб-приложений и сайтов. Изучение современных фреймворков и технологий.</p>
                     </article>
                     <article class="experience-card">
-                        <h3 class="experience-title">Опыт 3</h3>
-                        <p class="experience-desc">Работаю в фирме "Keleme Keleme". Получаю зарплату в валюте keleme keleme</p>
+                        <h3 class="experience-title">Опыт 3 - Компания "Keleme Keleme"</h3>
+                        <p class="experience-desc">Работаю в фирме "Keleme Keleme". Получаю зарплату в валюте keleme keleme. Занимаюсь разработкой и поддержкой веб-проектов.</p>
                     </article>
                 </div>
             </section>
         </main>
 
-        <footer class="footer">
+        <footer class="footer" role="contentinfo">
             <p>© 2025 Семестровая работа по фронтенд и бэкенд разработке</p>
             <p>Иванов Артем ???вович, ЭФБО-18-24</p>
         </footer>
     </div>
 
     <script>
-        // Обработка открытия резюме
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            
+            images.forEach(img => {
+                if (img.complete && img.naturalHeight === 0) {
+                    console.warn('Изображение не загружено:', img.src);
+                    createImageFallback(img);
+                }
+                
+                img.addEventListener('error', function() {
+                    createImageFallback(this);
+                });
+            });
+            
+            function createImageFallback(img) {
+                if (img.hasAttribute('data-fallback-set')) return;
+                
+                const altText = img.alt || 'Изображение';
+                const width = img.width || 200;
+                const height = img.height || 200;
+                
+                const fallback = document.createElement('div');
+                fallback.style.cssText = `
+                    width: ${width}px;
+                    height: ${height}px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: 600;
+                    border-radius: ${img.classList.contains('profile-photo') ? '50%' : '8px'};
+                    margin: 0 auto;
+                `;
+                fallback.textContent = altText.split(' - ')[0] || 'Фото';
+                fallback.setAttribute('aria-label', altText);
+                
+                img.replaceWith(fallback);
+                img.setAttribute('data-fallback-set', 'true');
+            }
+        });
+
         document.querySelector('.view-btn').addEventListener('click', function(e) {
             console.log('Пользователь открыл резюме в браузере');
-            
-            // Можно добавить проверку существования файла
-            // if (!fileExists) {
-            //     e.preventDefault();
-            //     alert('Файл резюме временно недоступен. Свяжитесь со мной для получения резюме.');
-            // }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                document.documentElement.classList.add('keyboard-navigation');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.documentElement.classList.remove('keyboard-navigation');
         });
     </script>
 </body>

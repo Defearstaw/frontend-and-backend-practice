@@ -2,50 +2,59 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Практики - Семестровая работа</title>
     <link rel="stylesheet" href="../style/styles.css">
     <style>
         .practices-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+            gap: clamp(var(--space-md), 1rem + 1vw, var(--space-xl));
+            margin-top: var(--space-lg);
         }
 
         .practice-card {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e9ecef;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: var(--radius);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
         }
 
         .practice-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
         }
 
         .practice-title {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 0.5rem;
+            color: var(--primary-color);
+            margin-bottom: var(--space-md);
+            font-size: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: var(--space-sm);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
         }
 
         .practice-desc {
-            color: #555;
+            color: var(--text-color);
             line-height: 1.6;
-            margin-bottom: 1rem;
+            margin-bottom: var(--space-md);
+            flex: 1;
         }
 
         .practice-tech {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-lg);
         }
 
         .tech-tag {
@@ -58,18 +67,30 @@
         }
 
         .practice-link {
-            display: inline-block;
-            background: #2c3e50;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: var(--space-sm) var(--space-md);
             border-radius: 6px;
             text-decoration: none;
             font-weight: 500;
-            transition: background 0.3s ease;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            min-height: 44px;
+            justify-content: center;
         }
 
-        .practice-link:hover {
-            background: #34495e;
+        .practice-link:hover,
+        .practice-link:focus {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .practice-link:focus {
+            outline: none;
+            border-color: #000;
         }
 
         .practice-status {
@@ -78,7 +99,7 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
-            margin-left: 1rem;
+            margin-left: auto;
         }
 
         .status-completed {
@@ -95,120 +116,225 @@
             background: #95a5a6;
             color: white;
         }
+
+        .link-icon {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        @supports (container-type: inline-size) {
+            .practices-container {
+                container-type: inline-size;
+                container-name: practices;
+            }
+
+            @container practices (max-width: 600px) {
+                .practices-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .practice-title {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                
+                .practice-status {
+                    margin-left: 0;
+                    margin-top: var(--space-xs);
+                }
+            }
+        }
+
+        @media (max-width: 768px) {
+            .practices-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: var(--space-md);
+            }
+            
+            .practice-card {
+                padding: var(--space-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .practices-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .practice-card,
+            .practice-link {
+                transition: none;
+            }
+            
+            .practice-card:hover,
+            .practice-link:hover {
+                transform: none;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="page-container">
-        <header class="header">
+        <a class="skip-link" href="#main-content">Перейти к основному содержимому</a>
+
+        <header class="header" role="banner">
             <h1>Портфолио студента</h1>
         </header>
 
-        <nav class="nav">
+        <nav class="nav" aria-label="Основная навигация">
             <ul class="nav-list">
                 <li class="nav-item"><a class="nav-link" href="../index.html">Главная</a></li>
                 <li class="nav-item"><a class="nav-link" href="news.html">Новости</a></li>
-                <li class="nav-item"><a class="nav-link" href="practices.html">Практики</a></li>
+                <li class="nav-item"><a class="nav-link" href="practices.html" aria-current="page">Практики</a></li>
                 <li class="nav-item"><a class="nav-link" href="goods.html">Товары</a></li>
                 <li class="nav-item"><a class="nav-link" href="contacts.html">Контакты</a></li>
             </ul>
         </nav>
 
-        <main class="content">
+        <main class="content" id="main-content">
             <h1 class="section-title">Практические работы</h1>
-            <p>Здесь представлены практические работы, выполненные в ходе изучения фронтенд и бэкенд разработки.</p>
+            <p>Здесь представлены практические работы, выполненные в ходе изучения фронтенд и бэкенд разработки с применением современных техник адаптивности и доступности.</p>
             
-            <div class="practices-grid">
-                <article class="practice-card">
-                    <h2 class="practice-title">
-                        Лендинг портфолио
-                        <span class="practice-status status-completed">Завершено</span>
-                    </h2>
-                    <p class="practice-desc">Создание адаптивного лендинга портфолио с использованием HTML5, CSS3 и JavaScript. Включает главную страницу, разделы с информацией и контактную форму.</p>
-                    <div class="practice-tech">
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS3</span>
-                        <span class="tech-tag">JavaScript</span>
-                    </div>
-                    <a href="../index.html" class="practice-link">Посмотреть работу</a>
-                </article>
+            <div class="practices-container">
+                <div class="practices-grid">
+                    <article class="practice-card">
+                        <h2 class="practice-title">
+                            Лендинг портфолио
+                            <span class="practice-status status-completed">Завершено</span>
+                        </h2>
+                        <p class="practice-desc">Создание адаптивного лендинга портфолио с использованием HTML5, CSS3 и JavaScript. Включает главную страницу, разделы с информацией и контактную форму.</p>
+                        <div class="practice-tech">
+                            <span class="tech-tag">HTML5</span>
+                            <span class="tech-tag">CSS3</span>
+                            <span class="tech-tag">JavaScript</span>
+                            <span class="tech-tag">Адаптивность</span>
+                        </div>
+                        <a href="../index.html" class="practice-link">
+                            <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                            </svg>
+                            Посмотреть работу
+                        </a>
+                    </article>
 
-                <article class="practice-card">
-                    <h2 class="practice-title">
-                        Модальное окно обратной связи
-                        <span class="practice-status status-completed">Завершено</span>
-                    </h2>
-                    <p class="practice-desc">Реализация интерактивного модального окна для формы обратной связи с валидацией полей и обработкой событий.</p>
-                    <div class="practice-tech">
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS3</span>
-                        <span class="tech-tag">JavaScript</span>
-                        <span class="tech-tag">Dialog API</span>
-                    </div>
-                    <a href="contacts.html" class="practice-link">Посмотреть работу</a>
-                </article>
+                    <article class="practice-card">
+                        <h2 class="practice-title">
+                            Модальное окно обратной связи
+                            <span class="practice-status status-completed">Завершено</span>
+                        </h2>
+                        <p class="practice-desc">Реализация интерактивного модального окна для формы обратной связи с валидацией полей и обработкой событий.</p>
+                        <div class="practice-tech">
+                            <span class="tech-tag">HTML5</span>
+                            <span class="tech-tag">CSS3</span>
+                            <span class="tech-tag">JavaScript</span>
+                            <span class="tech-tag">Dialog API</span>
+                            <span class="tech-tag">A11y</span>
+                        </div>
+                        <a href="contacts.html" class="practice-link">
+                            <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                            </svg>
+                            Посмотреть работу
+                        </a>
+                    </article>
 
-                <article class="practice-card">
-                    <h2 class="practice-title">
-                        Каталог товаров
-                        <span class="practice-status status-completed">Завершено</span>
-                    </h2>
-                    <p class="practice-desc">Разработка сетки товаров с карточками продукции, адаптивной версткой и семантической разметкой.</p>
-                    <div class="practice-tech">
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS Grid</span>
-                        <span class="tech-tag">Flexbox</span>
-                    </div>
-                    <a href="goods.html" class="practice-link">Посмотреть работу</a>
-                </article>
+                    <article class="practice-card">
+                        <h2 class="practice-title">
+                            Каталог товаров
+                            <span class="practice-status status-completed">Завершено</span>
+                        </h2>
+                        <p class="practice-desc">Разработка сетки товаров с карточками продукции, адаптивной версткой и семантической разметкой.</p>
+                        <div class="practice-tech">
+                            <span class="tech-tag">HTML5</span>
+                            <span class="tech-tag">CSS Grid</span>
+                            <span class="tech-tag">Flexbox</span>
+                            <span class="tech-tag">Адаптивность</span>
+                        </div>
+                        <a href="goods.html" class="practice-link">
+                            <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                            </svg>
+                            Посмотреть работу
+                        </a>
+                    </article>
 
-                <article class="practice-card">
-                    <h2 class="practice-title">
-                        Новостная лента
-                        <span class="practice-status status-completed">Завершено</span>
-                    </h2>
-                    <p class="practice-desc">Создание блока новостей с карточками статей, мета-информацией и структурным оформлением контента.</p>
-                    <div class="practice-tech">
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS3</span>
-                        <span class="tech-tag">Семантика</span>
-                    </div>
-                    <a href="news.html" class="practice-link">Посмотреть работу</a>
-                </article>
+                    <article class="practice-card">
+                        <h2 class="practice-title">
+                            Новостная лента
+                            <span class="practice-status status-completed">Завершено</span>
+                        </h2>
+                        <p class="practice-desc">Создание блока новостей с карточками статей, мета-информацией и структурным оформлением контента.</p>
+                        <div class="practice-tech">
+                            <span class="tech-tag">HTML5</span>
+                            <span class="tech-tag">CSS3</span>
+                            <span class="tech-tag">Семантика</span>
+                        </div>
+                        <a href="news.html" class="practice-link">
+                            <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                            </svg>
+                            Посмотреть работу
+                        </a>
+                    </article>
 
-                <article class="practice-card">
-                    <h2 class="practice-title">
-                        Бэкенд API для портфолио
-                        <span class="practice-status status-in-progress">В процессе</span>
-                    </h2>
-                    <p class="practice-desc">Разработка серверной части для обработки форм обратной связи и хранения данных портфолио.</p>
-                    <div class="practice-tech">
-                        <span class="tech-tag">Node.js</span>
-                        <span class="tech-tag">Express</span>
-                        <span class="tech-tag">MongoDB</span>
-                    </div>
-                    <a href="#" class="practice-link">Скоро будет</a>
-                </article>
+                    <article class="practice-card">
+                        <h2 class="practice-title">
+                            Бэкенд API для портфолио
+                            <span class="practice-status status-in-progress">В процессе</span>
+                        </h2>
+                        <p class="practice-desc">Разработка серверной части для обработки форм обратной связи и хранения данных портфолио.</p>
+                        <div class="practice-tech">
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">Express</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">REST API</span>
+                        </div>
+                        <a href="#" class="practice-link" aria-disabled="true">
+                            <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                            </svg>
+                            Скоро будет
+                        </a>
+                    </article>
 
-                <article class="practice-card">
-                    <h2 class="practice-title">
-                        Адаптивная навигация
-                        <span class="practice-status status-completed">Завершено</span>
-                    </h2>
-                    <p class="practice-desc">Создание адаптивного меню навигации, которое корректно отображается на всех типах устройств.</p>
-                    <div class="practice-tech">
-                        <span class="tech-tag">HTML5</span>
-                        <span class="tech-tag">CSS3</span>
-                        <span class="tech-tag">Media Queries</span>
-                    </div>
-                    <a href="../index.html" class="practice-link">Посмотреть работу</a>
-                </article>
+                    <article class="practice-card">
+                        <h2 class="practice-title">
+                            Адаптивная навигация
+                            <span class="practice-status status-completed">Завершено</span>
+                        </h2>
+                        <p class="practice-desc">Создание адаптивного меню навигации, которое корректно отображается на всех типах устройств.</p>
+                        <div class="practice-tech">
+                            <span class="tech-tag">HTML5</span>
+                            <span class="tech-tag">CSS3</span>
+                            <span class="tech-tag">Media Queries</span>
+                            <span class="tech-tag">Flexbox</span>
+                        </div>
+                        <a href="../index.html" class="practice-link">
+                            <svg class="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                            </svg>
+                            Посмотреть работу
+                        </a>
+                    </article>
+                </div>
             </div>
         </main>
 
-        <footer class="footer">
+        <footer class="footer" role="contentinfo">
             <p>© 2025 Семестровая работа по фронтенд и бэкенд разработке</p>
             <p>Иванов Артем ???вович, ЭФБО-18-24</p>
         </footer>
     </div>
+
+    <script>
+        document.querySelectorAll('.practice-link[aria-disabled="true"]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+            });
+        });
+    </script>
 </body>
 </html>
